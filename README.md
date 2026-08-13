@@ -12,7 +12,7 @@ Backend service for the API-6 college project. Everything runs inside Docker, so
 | [MongoDB](https://www.mongodb.com/) | 8.2 | Non-relational (document) database |
 | [Docker Compose](https://docs.docker.com/compose/) | v2 | Orchestrates all services |
 
-Django talks to PostgreSQL through its native ORM (`psycopg`) and to MongoDB through `pymongo` (see `core/mongo.py`). The frontend (Vue.js) will live in a separate repository and consume this API.
+Django talks to PostgreSQL through its native ORM (`psycopg`) and to MongoDB through `pymongo` (see `core/mongo.py`). The frontend (Vue.js) lives in a separate repository and consumes this API — CORS is enabled only for the origins listed in `DJANGO_CORS_ALLOWED_ORIGINS` (the Vite dev server, by default).
 
 ## Requirements
 
@@ -178,6 +178,7 @@ This project handles personal data topics this semester, so the environment was 
 | Containers keep restarting | Check `docker compose logs -f` — usually a wrong value in `.env`. |
 | MongoDB exits with a "kernel incompatibility" fatal log | MongoDB 8.0 does not start on Linux kernel 6.19+. This project pins `mongo:8.2`, which is fixed — do not downgrade the image. |
 | Slow on Windows | Keep the project inside the WSL2 filesystem (e.g. `\\wsl$/Ubuntu/home/...`), not on `C:\`. |
+| CORS error in the browser console | The frontend origin is not allowed. Add it to `DJANGO_CORS_ALLOWED_ORIGINS` in `.env` and restart: `docker compose restart api`. |
 
 ## Project structure
 
