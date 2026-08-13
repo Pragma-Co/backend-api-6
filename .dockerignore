@@ -1,0 +1,15 @@
+# Secrets must never be baked into image layers (LGPD).
+# At runtime they are injected via env_file in docker-compose.yml.
+.env
+CREDENTIALS.txt
+
+.git
+.gitignore
+.gitattributes
+.claude
+__pycache__
+*.pyc
+.venv
+venv
+README.md
+LICENSE

@@ -1,0 +1,80 @@
+name: api-6
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: api6-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # LGPD hardening: enforce SCRAM-SHA-256 password authentication
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      # Bound to localhost only so the database is never exposed on the local network.
+      # POSTGRES_PORT in .env changes only the host-side port.
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+    healthcheck:
+      # -h 127.0.0.1 forces TCP, so the probe cannot succeed against the
+      # temporary socket-only server postgres runs during first-time init
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  mongodb:
+    # 8.2+ required: MongoDB 8.0 cannot start on Linux kernel 6.19+ (SERVER-121912)
+    image: mongo:8.2
+    container_name: api6-mongodb
+    restart: unless-stopped
+    environment:
+      # LGPD hardening: authentication is mandatory (no anonymous access)
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB}
+    volumes:
+      - mongo_data:/data/db
+    ports:
+      # Bound to localhost only so the database is never exposed on the local network.
+      # MONGO_PORT in .env changes only the host-side port.
+      - "127.0.0.1:${MONGO_PORT:-27017}:27017"
+    healthcheck:
+      # Authenticated ping, so the probe cannot succeed against the
+      # temporary pre-auth server mongo runs during first-time init
+      test: ["CMD-SHELL", "mongosh -u $$MONGO_INITDB_ROOT_USERNAME -p $$MONGO_INITDB_ROOT_PASSWORD --authenticationDatabase admin --quiet --eval \"db.adminCommand('ping').ok\""]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
+
+  api:
+    build: .
+    container_name: api6-django
+    restart: unless-stopped
+    command: sh -c "python manage.py migrate && python manage.py ensure_superuser && python manage.py runserver 0.0.0.0:8000"
+    env_file: .env
+    environment:
+      # Inside the Docker network the databases are reached by service name on
+      # their fixed internal ports; host-side overrides from .env must not apply here
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      MONGO_HOST: mongodb
+      MONGO_PORT: "27017"
+    volumes:
+      - .:/app
+    ports:
+      # Localhost only, like the databases; host port configurable via API_PORT in .env
+      - "127.0.0.1:${API_PORT:-8000}:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  mongo_data:

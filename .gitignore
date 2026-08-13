@@ -1,0 +1,27 @@
+# Secrets (LGPD: credentials must never reach version control)
+.env
+CREDENTIALS.txt
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Django
+db.sqlite3
+staticfiles/
+media/
+
+# IDEs and editors
+.idea/
+.vscode/
+*.swp
+
+# Claude Code
+.claude/
+
+# OS files
+.DS_Store
+Thumbs.db

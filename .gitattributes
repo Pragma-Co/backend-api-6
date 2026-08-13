@@ -1,0 +1,8 @@
+# Normalize line endings so the project works on both Linux and Windows.
+* text=auto
+
+# Files that must always use LF (CRLF breaks them inside Linux containers)
+*.sh text eol=lf
+*.py text eol=lf
+Dockerfile text eol=lf
+docker-compose.yml text eol=lf
