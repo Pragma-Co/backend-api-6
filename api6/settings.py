@@ -85,7 +85,7 @@ DATABASES = {
         "USER": os.environ.get("POSTGRES_USER", "api6_admin"),
         "PASSWORD": os.environ.get("POSTGRES_PASSWORD", ""),
         "HOST": os.environ.get("POSTGRES_HOST", "localhost"),
-        "PORT": os.environ.get("POSTGRES_PORT", "5432"),
+        "PORT": os.environ.get("POSTGRES_PORT", "5433"),
     }
 }
 
@@ -97,7 +97,7 @@ MONGO_DB_NAME = os.environ.get("MONGO_DB", "api6")
 MONGO_USER = os.environ.get("MONGO_USER", "api6_admin")
 MONGO_PASSWORD = os.environ.get("MONGO_PASSWORD", "")
 MONGO_HOST = os.environ.get("MONGO_HOST", "localhost")
-MONGO_PORT = os.environ.get("MONGO_PORT", "27017")
+MONGO_PORT = os.environ.get("MONGO_PORT", "27018")
 
 # Password validation (also part of a healthy LGPD posture)
 

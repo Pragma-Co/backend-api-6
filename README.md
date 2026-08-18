@@ -127,8 +127,8 @@ To add more users later: `docker compose exec api python manage.py createsuperus
 | <http://localhost:8000/> | API root (welcome + endpoint list) |
 | <http://localhost:8000/health/> | Health check: PostgreSQL + MongoDB connectivity |
 | <http://localhost:8000/admin/> | Django admin panel |
-| `localhost:5432` | PostgreSQL (localhost only, e.g. for DBeaver/pgAdmin) |
-| `localhost:27017` | MongoDB (localhost only, e.g. for Compass) |
+| `localhost:5433` | PostgreSQL (localhost only, e.g. for DBeaver/pgAdmin) |
+| `localhost:27018` | MongoDB (localhost only, e.g. for Compass) |
 
 > These are the default ports. If you changed `API_PORT`, `POSTGRES_PORT` or `MONGO_PORT` in your `.env`, use those instead.
 
@@ -164,7 +164,7 @@ This project handles personal data topics this semester, so the environment was 
 - **Secrets never reach Git or Docker images** — `.env` and `CREDENTIALS.txt` are in `.gitignore` and `.dockerignore`.
 - **PostgreSQL** enforces `scram-sha-256` password authentication (no `trust`, no `md5`).
 - **MongoDB** runs with mandatory authentication (no anonymous access).
-- **Nothing is exposed to the network** — the API (8000) and both databases (5432/27017) are bound to `127.0.0.1` only; other machines on your LAN cannot reach them.
+- **Nothing is exposed to the network** — the API (8000) and both databases (5433/27018) are bound to `127.0.0.1` only; other machines on your LAN cannot reach them.
 - **Health/error responses never include connection details** — database failures are logged server-side; HTTP responses carry no usernames, hosts or stack traces.
 - **Team rules:** never commit `.env`, never log or seed real personal data, rotate credentials if they leak, and collect only the data the application actually needs (data minimization).
 

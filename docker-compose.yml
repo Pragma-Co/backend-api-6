@@ -16,7 +16,7 @@ services:
     ports:
       # Bound to localhost only so the database is never exposed on the local network.
       # POSTGRES_PORT in .env changes only the host-side port.
-      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
     healthcheck:
       # -h 127.0.0.1 forces TCP, so the probe cannot succeed against the
       # temporary socket-only server postgres runs during first-time init
@@ -41,7 +41,7 @@ services:
     ports:
       # Bound to localhost only so the database is never exposed on the local network.
       # MONGO_PORT in .env changes only the host-side port.
-      - "127.0.0.1:${MONGO_PORT:-27017}:27017"
+      - "127.0.0.1:${MONGO_PORT:-27018}:27017"
     healthcheck:
       # Authenticated ping, so the probe cannot succeed against the
       # temporary pre-auth server mongo runs during first-time init
